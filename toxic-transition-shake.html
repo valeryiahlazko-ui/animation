@@ -1,0 +1,212 @@
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.wrap {
+  padding: 1.5rem 0 2rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.device {
+  width: 360px; height: 200px;
+  border-radius: 10px; overflow: hidden;
+  position: relative; border: 1px solid #2a2a3a;
+}
+
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+}
+
+.screen-bonus { background: radial-gradient(ellipse at 50% 30%, #2a6a10, #0d2205); }
+.bonus-title {
+  font-size: 22px; font-weight: 900; text-align: center; line-height: 1;
+  color: #ffe040; font-family: Impact, sans-serif;
+  text-shadow: 0 0 12px #ff8800, 2px 2px 0 #8a4400;
+}
+.bonus-sub { font-size: 10px; color: #a0ff60; letter-spacing: 1px; }
+.bonus-btn {
+  margin-top: 8px; padding: 6px 20px;
+  background: transparent; border: 1px solid #6eff30;
+  border-radius: 3px; font-size: 10px; color: #6eff30;
+  letter-spacing: 2px; cursor: pointer;
+}
+.bonus-btn:hover { background: rgba(110,255,48,0.12); }
+
+.screen-slot {
+  background: radial-gradient(ellipse at 50% 30%, #2a0a4a, #0a0214);
+  display: none;
+}
+.slot-logo { font-size: 10px; font-weight: 900; color: #60ff30; letter-spacing: 3px; }
+.slot-reels {
+  display: flex; gap: 4px;
+  background: #0a0010; border: 2px solid #8030d0;
+  border-radius: 6px; padding: 6px 8px;
+  box-shadow: 0 0 16px #8030d066;
+}
+.reel {
+  width: 36px; height: 36px; background: #150025; border-radius: 4px;
+  border: 1px solid #6020b0;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.slot-win { font-size: 13px; font-weight: 700; color: #ffe040; letter-spacing: 2px; }
+.slot-back {
+  font-size: 9px; color: #6040a0; cursor: pointer;
+  border: none; background: none; margin-top: 2px; letter-spacing: 1px;
+}
+.slot-back:hover { color: #a080d0; }
+
+/* Чёрные полосы */
+.bar {
+  position: absolute; left: 0; right: 0;
+  background: #000; z-index: 20; pointer-events: none;
+  height: 0;
+}
+.bar-top    { top: 0; }
+.bar-bottom { bottom: 0; }
+
+/* Тряска */
+@keyframes shake-soft {
+  0%,100% { transform: translate(0, 0); }
+  10%     { transform: translate(-4px, -2px); }
+  20%     { transform: translate(4px,  2px); }
+  30%     { transform: translate(-3px,  1px); }
+  40%     { transform: translate(3px, -1px); }
+  55%     { transform: translate(-2px,  1px); }
+  70%     { transform: translate(2px, -1px); }
+  85%     { transform: translate(-1px,  0px); }
+}
+
+.screen-slot.shaking {
+  animation: shake-soft 0.55s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Контролы */
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.lbl { font-size: 12px; color: var(--text-muted); }
+select {
+  background: var(--surface-1); border: 0.5px solid var(--border-strong);
+  color: var(--text-primary); border-radius: 6px; padding: 5px 8px; font-size: 12px;
+}
+.badge { display: flex; gap: 6px; font-size: 11px; color: var(--text-muted); align-items: center; }
+.badge span {
+  background: var(--surface-1); border: 0.5px solid var(--border);
+  border-radius: 4px; padding: 3px 8px; font-family: monospace; color: var(--text-accent);
+}
+</style>
+
+<div class="wrap">
+  <div class="device">
+
+    <div class="screen screen-bonus" id="s1">
+      <div style="font-size:26px">☠️</div>
+      <div class="bonus-title">FULL<br>MELTDOWN</div>
+      <div class="bonus-sub">🍬 You won 10 Free Spins!</div>
+      <button class="bonus-btn" id="continue-btn">Click to continue</button>
+    </div>
+
+    <div class="screen screen-slot" id="s2">
+      <div class="slot-logo">TOXIC TREATS</div>
+      <div class="slot-reels">
+        <div class="reel">🍭</div>
+        <div class="reel">☠️</div>
+        <div class="reel">🍬</div>
+        <div class="reel">🧪</div>
+        <div class="reel">🍭</div>
+      </div>
+      <div class="slot-win">x999</div>
+      <button class="slot-back" id="back-btn">← назад</button>
+    </div>
+
+    <div class="bar bar-top"    id="bar-top"></div>
+    <div class="bar bar-bottom" id="bar-bottom"></div>
+  </div>
+
+  <div class="controls">
+    <span class="lbl">Переход</span>
+    <select id="speed">
+      <option value="250">Быстро</option>
+      <option value="420" selected>Нормально</option>
+      <option value="650">Медленно</option>
+    </select>
+    <span class="lbl">Easing</span>
+    <select id="easing">
+      <option value="ease-in-out" selected>ease-in-out</option>
+      <option value="cubic-bezier(0.4,0,0.2,1)">cinematic</option>
+    </select>
+  </div>
+
+  <div class="badge">
+    <span>bars close → swap → bars open → shake</span>
+  </div>
+</div>
+
+<script>
+const s1          = document.getElementById('s1');
+const s2          = document.getElementById('s2');
+const barTop      = document.getElementById('bar-top');
+const barBottom   = document.getElementById('bar-bottom');
+const continueBtn = document.getElementById('continue-btn');
+const backBtn     = document.getElementById('back-btn');
+
+let running = false;
+let isSlot  = false;
+
+function triggerShake(el) {
+  el.classList.remove('shaking');
+  void el.offsetWidth; // reflow
+  el.classList.add('shaking');
+  el.addEventListener('animationend', () => {
+    el.classList.remove('shaking');
+  }, { once: true });
+}
+
+function doTransition(toSlot) {
+  if (running) return;
+  running = true;
+
+  const dur  = parseInt(document.getElementById('speed').value);
+  const ease = document.getElementById('easing').value;
+
+  // 1. Полосы закрываются
+  [barTop, barBottom].forEach(b => {
+    b.style.transition = `height ${dur}ms ${ease}`;
+    b.style.height = '50%';
+  });
+
+  // 2. Меняем экраны в темноте
+  setTimeout(() => {
+    if (toSlot) {
+      s1.style.display = 'none';
+      s2.style.display = 'flex';
+    } else {
+      s2.style.display = 'none';
+      s1.style.display = 'flex';
+    }
+  }, dur);
+
+  // 3. Полосы открываются
+  setTimeout(() => {
+    [barTop, barBottom].forEach(b => {
+      b.style.transition = `height ${dur}ms ${ease}`;
+      b.style.height = '0';
+    });
+  }, dur + 60);
+
+  // 4. Тряска — после того как полосы открылись
+  setTimeout(() => {
+    if (toSlot) triggerShake(s2);
+  }, dur + 60 + dur + 40);
+
+  // Конец
+  setTimeout(() => {
+    isSlot  = toSlot;
+    running = false;
+  }, dur * 2 + 700);
+}
+
+continueBtn.addEventListener('click', () => doTransition(true));
+backBtn.addEventListener('click',     () => doTransition(false));
+</script>
