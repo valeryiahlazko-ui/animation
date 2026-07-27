@@ -1,0 +1,282 @@
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.wrap {
+  padding: 1rem 0 1.5rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Сцена */
+.scene {
+  width: 100%; max-width: 520px;
+  background: radial-gradient(ellipse at 50% 0%, #3a0a6a, #140228);
+  border-radius: 12px;
+  padding: 1.5rem 1rem 1.25rem;
+  overflow: hidden;
+  position: relative;
+  min-height: 280px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+
+/* Фоновые трубы — намёк на стиль */
+.pipe-bg {
+  position: absolute; top: 0; bottom: 0;
+  width: 32px; background: linear-gradient(180deg, #2a1048, #1a0838);
+  border-right: 2px solid #6030a0; opacity: 0.5;
+}
+.pipe-bg.left  { left: 12px; }
+.pipe-bg.right { right: 12px; }
+
+/* Логотип */
+.logo {
+  text-align: center; position: relative; z-index: 2;
+  opacity: 0; transform: translateY(-30px);
+}
+.logo-main {
+  font-size: 28px; font-weight: 900; font-family: Impact, sans-serif;
+  letter-spacing: 2px; line-height: 0.9;
+  color: #60ff20;
+  text-shadow: 0 0 20px #60ff2088, 0 2px 0 #2a8a00, -2px -2px 0 #ff40a0, 2px 2px 0 #ff40a0;
+}
+.logo-sub {
+  font-size: 22px; font-weight: 900; font-family: Impact, sans-serif;
+  letter-spacing: 4px;
+  color: #ff40c0;
+  text-shadow: 0 0 16px #ff40c088, 2px 2px 0 #8a0050;
+}
+.logo-drip {
+  font-size: 9px; color: #60ff2066; letter-spacing: 2px; margin-top: 2px;
+}
+
+/* Карточки */
+.cards {
+  display: flex; gap: 10px;
+  position: relative; z-index: 2;
+  width: 100%;
+}
+
+.card {
+  flex: 1; min-width: 0;
+  background: rgba(80, 0, 140, 0.55);
+  border: 2px solid #7030c0;
+  border-radius: 8px;
+  padding: 10px 8px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  position: relative;
+  opacity: 0;
+  box-shadow: 0 0 0 0 #60ff2000, inset 0 0 20px rgba(96,255,32,0);
+}
+
+/* Угловые декоры карточки */
+.card::before, .card::after {
+  content: '✕';
+  position: absolute;
+  font-size: 9px; color: #6030a0;
+}
+.card::before { top: 4px; left: 6px; }
+.card::after  { bottom: 4px; right: 6px; }
+
+.card-icon { font-size: 28px; line-height: 1; }
+.card-title {
+  font-size: 10px; font-weight: 800; color: #60ff20;
+  letter-spacing: 1px; text-align: center; text-transform: uppercase;
+}
+.card-text {
+  font-size: 9px; color: #c0a0e0; text-align: center; line-height: 1.5;
+}
+
+/* Click to continue */
+.cta {
+  font-size: 11px; color: #e0c0ff;
+  letter-spacing: 3px; text-transform: uppercase;
+  position: relative; z-index: 2;
+  opacity: 0;
+  animation: cta-pulse 2s ease-in-out infinite;
+  cursor: pointer;
+}
+@keyframes cta-pulse {
+  0%,100% { opacity: 0.7; }
+  50%      { opacity: 1; text-shadow: 0 0 10px #c080ff; }
+}
+
+/* ── Анимации появления ── */
+
+/* Вариант A: Slide up */
+@keyframes slideUp {
+  0%   { opacity: 0; transform: translateY(50px); }
+  60%  { opacity: 1; transform: translateY(-6px); }
+  80%  { transform: translateY(3px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Вариант B: Zoom + glow */
+@keyframes zoomGlow {
+  0%   { opacity: 0; transform: scale(0.7); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Вариант C: Flip */
+@keyframes flipIn {
+  0%   { opacity: 0; transform: rotateY(80deg) scale(0.8); }
+  60%  { opacity: 1; transform: rotateY(-8deg) scale(1.02); }
+  100% { opacity: 1; transform: rotateY(0) scale(1); }
+}
+
+/* Вариант D: Drop + bounce */
+@keyframes dropBounce {
+  0%   { opacity: 0; transform: translateY(-60px) rotate(-3deg); }
+  55%  { opacity: 1; transform: translateY(8px) rotate(1deg); }
+  75%  { transform: translateY(-4px) rotate(-0.5deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+/* Логотип */
+@keyframes logoIn {
+  0%   { opacity: 0; transform: translateY(-30px) scale(0.9); }
+  60%  { opacity: 1; transform: translateY(5px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ctaIn {
+  0%   { opacity: 0; }
+  100% { opacity: 0.7; }
+}
+
+/* Свечение карточки при появлении */
+@keyframes cardGlow {
+  0%,100% { box-shadow: 0 0 0 0 #60ff2000; }
+  40%      { box-shadow: 0 0 18px 4px #60ff2055, inset 0 0 12px rgba(96,255,32,0.08); }
+}
+
+/* Контролы */
+.controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; justify-content: center;
+}
+.lbl { font-size: 12px; color: var(--text-muted); }
+select {
+  background: var(--surface-1); border: 0.5px solid var(--border-strong);
+  color: var(--text-primary); border-radius: 6px; padding: 5px 8px; font-size: 12px;
+}
+button {
+  padding: 7px 18px; border-radius: 6px;
+  border: 0.5px solid var(--border-strong);
+  background: var(--surface-1); color: var(--text-primary);
+  font-size: 12px; cursor: pointer;
+}
+button:hover { background: var(--surface-0); }
+</style>
+
+<div class="wrap">
+  <div class="scene">
+    <div class="pipe-bg left"></div>
+    <div class="pipe-bg right"></div>
+
+    <div class="logo" id="logo">
+      <div class="logo-main">TOXIC</div>
+      <div class="logo-sub">TREATS</div>
+      <div class="logo-drip">▼ ▼ ▼</div>
+    </div>
+
+    <div class="cards">
+      <div class="card" id="card1">
+        <div class="card-icon">☠️</div>
+        <div class="card-title">Toxic Reels</div>
+        <div class="card-text">Wild Symbols transform reels into Toxic Reels with multipliers.</div>
+      </div>
+      <div class="card" id="card2">
+        <div class="card-icon">⚗️</div>
+        <div class="card-title">Toxic Meter</div>
+        <div class="card-text">Sticky Toxic Reels add multiplier points during Bonus Feature.</div>
+      </div>
+      <div class="card" id="card3">
+        <div class="card-icon">💰</div>
+        <div class="card-title">Max Win</div>
+        <div class="card-text">Combine multipliers and reach up to 25,000x your play.</div>
+      </div>
+    </div>
+
+    <div class="cta" id="cta" style="animation:none">Click to continue</div>
+  </div>
+
+  <div class="controls">
+    <span class="lbl">Стиль</span>
+    <select id="style">
+      <option value="slideUp">Slide up (снизу)</option>
+      <option value="zoomGlow" selected>Zoom + glow</option>
+      <option value="flipIn">Flip (переворот)</option>
+      <option value="dropBounce">Drop bounce (сверху)</option>
+    </select>
+    <span class="lbl">Пауза</span>
+    <select id="stagger">
+      <option value="100">Быстро</option>
+      <option value="180" selected>Нормально</option>
+      <option value="280">Медленно</option>
+    </select>
+    <button id="replay">↩ Ещё раз</button>
+  </div>
+</div>
+
+<script>
+const logo  = document.getElementById('logo');
+const cards = [
+  document.getElementById('card1'),
+  document.getElementById('card2'),
+  document.getElementById('card3'),
+];
+const cta = document.getElementById('cta');
+
+function reset() {
+  logo.style.animation = 'none';
+  logo.style.opacity   = '0';
+  logo.style.transform = 'translateY(-30px)';
+  cards.forEach(c => {
+    c.style.animation  = 'none';
+    c.style.opacity    = '0';
+    c.style.transform  = '';
+    c.style.boxShadow  = '';
+  });
+  cta.style.animation = 'none';
+  cta.style.opacity   = '0';
+}
+
+function play() {
+  reset();
+  const styleName = document.getElementById('style').value;
+  const stagger   = parseInt(document.getElementById('stagger').value);
+
+  const dur = 620;
+  const ease = 'cubic-bezier(0.34,1.3,0.64,1)';
+
+  // Логотип
+  setTimeout(() => {
+    logo.style.animation = `logoIn ${dur}ms ${ease} forwards`;
+  }, 80);
+
+  // Карточки с задержкой
+  cards.forEach((card, i) => {
+    setTimeout(() => {
+      card.style.animation = `${styleName} ${dur}ms ${ease} forwards,
+                              cardGlow ${dur * 1.4}ms ease-out forwards`;
+    }, 300 + i * stagger);
+  });
+
+  // CTA
+  const ctaDelay = 300 + cards.length * stagger + 200;
+  setTimeout(() => {
+    cta.style.animation = `ctaIn 400ms ease-out forwards, cta-pulse 2s ease-in-out ${400}ms infinite`;
+  }, ctaDelay);
+}
+
+document.getElementById('replay').addEventListener('click', () => {
+  void document.body.offsetWidth;
+  play();
+});
+
+document.getElementById('style').addEventListener('change', play);
+document.getElementById('stagger').addEventListener('change', play);
+
+setTimeout(play, 300);
+</script>
